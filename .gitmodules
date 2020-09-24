@@ -1,3 +1,9 @@
 [submodule "libs/sokol"]
 	path = libs/sokol
 	url = https://github.com/floooh/sokol
+[submodule "libs/stb"]
+	path = libs/stb
+	url = https://github.com/nothings/stb
+[submodule "libs/Handmade-Math"]
+	path = libs/Handmade-Math
+	url = https://github.com/HandmadeMath/Handmade-Math

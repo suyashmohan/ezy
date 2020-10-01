@@ -52,14 +52,14 @@ void update(void) {
   }
 }
 
-void draw() {
+void draw(void) {
   for (int i = 0; i < 4; i++) {
     draw_quad(recs[i].x, recs[i].y, recs[i].w, recs[i].h, recs[i].r, recs[i].g,
               recs[i].b);
   }
 }
 
-void frame() {
+void frame(void) {
   if (did_init == 0) {
     init();
   }

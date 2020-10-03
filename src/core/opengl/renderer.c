@@ -1,10 +1,7 @@
 #define SOKOL_GLCORE33
 
+#include "../core.h"
 #include "../renderer.h"
-#include "../../../libs/Handmade-Math/HandmadeMath.h"
-#include "../../../libs/sokol/sokol_app.h"
-#include "../../../libs/sokol/sokol_gfx.h"
-#include "../../../libs/sokol/sokol_glue.h"
 #include "shader.glsl.h"
 
 #include <stdio.h>
@@ -34,7 +31,7 @@ void renderer_init(void) {
   sg_buffer vbuf = sg_make_buffer(&vbuf_desc);
 
   sg_buffer_desc ibuf_desc = {
-      .size = MAX_SPRITES * sizeof(indices),
+      .size = MAX_SPRITES * 6 * sizeof(uint16_t),
       .type = SG_BUFFERTYPE_INDEXBUFFER,
       .usage = SG_USAGE_STREAM,
   };
@@ -101,6 +98,7 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
   if (vertices_count >= MAX_SPRITES * 4) {
     printf("Unable to allocate memory. Vertices Count:%d\n", vertices_count);
     exit(EXIT_FAILURE);
+    return;
   }
   int v = vertices_count;
   vertices[v + 0] = (vertex_desc_t){posx, posy, clr_r, clr_g, clr_b, 1.5f};

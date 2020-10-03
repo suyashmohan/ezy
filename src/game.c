@@ -1,7 +1,9 @@
-#include "../libs/sokol/sokol_time.h"
 #include "game.h"
 #include "core/renderer.h"
 
+#define MAX_RECTS 10000
+#include <time.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 struct rectangle {
@@ -16,24 +18,22 @@ struct rectangle {
   float dy;
 } rectangle;
 
-struct rectangle recs[] = {
-    [0] = {0.0, 50.0, 50.0, 50.0, 1.0, 0.0, 0.0, 1.0, 1.0},
-    [1] = {100.0, 150.0, 50.0, 50.0, 0.0, 1.0, 0.0, 1.0, -1.0},
-    [2] = {200.0, 250.0, 50.0, 50.0, 0.0, 0.0, 1.0, -1.0, 1.0},
-    [3] = {300.0, 350.0, 50.0, 50.0, 0.0, 1.0, 1.0, -1.0, -1.0},
-};
-
+int rect_count = 0;
+struct rectangle recs[MAX_RECTS];
 int did_init = 0;
 uint64_t last_time = 0;
 double timer = 0.0;
+FILE *logfile;
 
 void init(void) {
   did_init = 1;
+  srand(time(NULL));
   stm_setup();
+  logfile = fopen("log.txt", "w");
 }
 
 void update(void) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < rect_count; i++) {
     recs[i].x += recs[i].dx;
     recs[i].y += recs[i].dy;
     if (recs[i].x < 0 || recs[i].x + recs[i].w > 1280.0) {
@@ -53,15 +53,39 @@ void update(void) {
 }
 
 void draw(void) {
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < rect_count; i++) {
     draw_quad(recs[i].x, recs[i].y, recs[i].w, recs[i].h, recs[i].r, recs[i].g,
               recs[i].b);
   }
 }
 
-void frame(void) {
+void event(const sapp_event *e) {
+  if (e->type == SAPP_EVENTTYPE_KEY_DOWN) {
+    if(e->key_code == SAPP_KEYCODE_DOWN) {
+      if(rect_count < MAX_RECTS) {
+        recs[rect_count].x = 1280.0 / 2.0 - 25.0;
+        recs[rect_count].y = 720.0 / 2.0 - 25.0;
+        recs[rect_count].w = 50.0;
+        recs[rect_count].h = 50.0;
+        recs[rect_count].r = (float)rand()/(float)(RAND_MAX);
+        recs[rect_count].g = (float)rand()/(float)(RAND_MAX);
+        recs[rect_count].b = (float)rand()/(float)(RAND_MAX);
+        recs[rect_count].dx = (float)rand()/(float)(RAND_MAX) - 0.5f;
+        recs[rect_count].dy = (float)rand()/(float)(RAND_MAX) - 0.5f;
+        rect_count += 1;
+        fprintf(logfile, "rects: %d\n", rect_count);
+        fflush(logfile);
+      }
+    }
+  }
+}
+
+void frame(const sapp_event *e) {
   if (did_init == 0) {
     init();
+  }
+  if(e != NULL){
+    event(e);
   }
   update();
   draw();

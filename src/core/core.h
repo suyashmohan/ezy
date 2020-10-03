@@ -1,6 +1,8 @@
 #ifndef __CORE_H__
 #define __CORE_H__
 
+// Helper header to include libraries
+
 #include "../../libs/sokol/sokol_app.h"
 #include "../../libs/sokol/sokol_gfx.h"
 #include "../../libs/sokol/sokol_glue.h"

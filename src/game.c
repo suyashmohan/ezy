@@ -23,13 +23,11 @@ struct rectangle recs[MAX_RECTS];
 int did_init = 0;
 uint64_t last_time = 0;
 double timer = 0.0;
-FILE *logfile;
 
 void init(void) {
   did_init = 1;
   srand(time(NULL));
   stm_setup();
-  logfile = fopen("log.txt", "w");
 }
 
 void update(void) {
@@ -73,8 +71,6 @@ void event(const sapp_event *e) {
         recs[rect_count].dx = (float)rand()/(float)(RAND_MAX) - 0.5f;
         recs[rect_count].dy = (float)rand()/(float)(RAND_MAX) - 0.5f;
         rect_count += 1;
-        fprintf(logfile, "rects: %d\n", rect_count);
-        fflush(logfile);
       }
     }
   }

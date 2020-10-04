@@ -1,7 +1,7 @@
 #define SOKOL_GLCORE33
 
-#include "../core.h"
 #include "../renderer.h"
+#include "../core.h"
 #include "shader.glsl.h"
 
 #include <stdio.h>
@@ -49,16 +49,16 @@ void renderer_init(void) {
   pip = sg_make_pipeline(&(sg_pipeline_desc){
       .shader = shd,
       .index_type = SG_INDEXTYPE_UINT16,
-      .layout = {.attrs =
-                     {
-                         [ATTR_vs_position] = {.offset = 0,
-                                               .format =
-                                                   SG_VERTEXFORMAT_FLOAT2},
-                         [ATTR_vs_color0] = {.offset = 2 * sizeof(float),
-                                             .format = SG_VERTEXFORMAT_FLOAT4},
-                         [ATTR_vs_texcoord0] = {.offset = 6 * sizeof(float),
-                                            .format = SG_VERTEXFORMAT_FLOAT2},
-                     }},
+      .layout =
+          {.attrs =
+               {
+                   [ATTR_vs_position] = {.offset = 0,
+                                         .format = SG_VERTEXFORMAT_FLOAT2},
+                   [ATTR_vs_color0] = {.offset = 2 * sizeof(float),
+                                       .format = SG_VERTEXFORMAT_FLOAT4},
+                   [ATTR_vs_texcoord0] = {.offset = 6 * sizeof(float),
+                                          .format = SG_VERTEXFORMAT_FLOAT2},
+               }},
       .blend = {.enabled = true,
                 .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
                 .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA},
@@ -106,13 +106,14 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
     return;
   }
   int v = vertices_count;
-  vertices[v + 0] = (vertex_desc_t){posx, posy, clr_r, clr_g, clr_b, 1.0f, 0.0f, 0.0f};
-  vertices[v + 1] =
-      (vertex_desc_t){posx + width, posy, clr_r, clr_g, clr_b, 1.0f, 1.0f, 0.0f};
-  vertices[v + 2] =
-      (vertex_desc_t){posx + width, posy - height, clr_r, clr_g, clr_b, 1.0f, 1.0f, 1.0f};
-  vertices[v + 3] =
-      (vertex_desc_t){posx, posy - height, clr_r, clr_g, clr_b, 1.0f, 0.0f, 1.0f};
+  vertices[v + 0] =
+      (vertex_desc_t){posx, posy, clr_r, clr_g, clr_b, 1.0f, 0.0f, 0.0f};
+  vertices[v + 1] = (vertex_desc_t){posx + width, posy, clr_r, clr_g,
+                                    clr_b,        1.0f, 1.0f,  0.0f};
+  vertices[v + 2] = (vertex_desc_t){posx + width, posy - height, clr_r, clr_g,
+                                    clr_b,        1.0f,          1.0f,  1.0f};
+  vertices[v + 3] = (vertex_desc_t){posx,  posy - height, clr_r, clr_g,
+                                    clr_b, 1.0f,          0.0f,  1.0f};
   vertices_count += 4;
 
   int i = indices_count;
@@ -125,13 +126,14 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
   indices_count += 6;
 }
 
-texture load_texture(const char *file) {
-  texture tex;
+texture_desc load_texture(const char *file) {
+  texture_desc tex;
 
   int desired_channels = 4;
   int imgW, imgH, nrChannels;
   // stbi_set_flip_vertically_on_load(true);
-  unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, desired_channels);
+  unsigned char *data =
+      stbi_load(file, &imgW, &imgH, &nrChannels, desired_channels);
   if (!data) {
     printf("Unabel to load image: %s\n", file);
     exit(EXIT_FAILURE);
@@ -139,17 +141,16 @@ texture load_texture(const char *file) {
   printf("Image Loaded : %s - %dx%d [%d bits]\n", file, imgW, imgH,
          desired_channels * 8);
 
-  sg_init_image(bind.fs_images[SLOT_tex], &(sg_image_desc){
-    .width = imgW,
-    .height = imgH,
-    .pixel_format = SG_PIXELFORMAT_RGBA8,
-    .min_filter = SG_FILTER_LINEAR,
-    .mag_filter = SG_FILTER_LINEAR,
-    .content.subimage[0][0] = {
-      .ptr = data,
-      .size = imgW * imgH * 4,
-    } 
-  });
+  sg_init_image(bind.fs_images[SLOT_tex],
+                &(sg_image_desc){.width = imgW,
+                                 .height = imgH,
+                                 .pixel_format = SG_PIXELFORMAT_RGBA8,
+                                 .min_filter = SG_FILTER_LINEAR,
+                                 .mag_filter = SG_FILTER_LINEAR,
+                                 .content.subimage[0][0] = {
+                                     .ptr = data,
+                                     .size = imgW * imgH * 4,
+                                 }});
 
   stbi_image_free(data);
 

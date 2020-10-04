@@ -1,6 +1,6 @@
+#include "../game.h"
 #include "core.h"
 #include "renderer.h"
-#include "../game.h"
 #include <stdio.h>
 
 sg_pass_action pass_action;
@@ -29,9 +29,7 @@ void app_cleanup(void) {
   sg_shutdown();
 }
 
-void app_event(const sapp_event *e) {
-  last_event = e;
-}
+void app_event(const sapp_event *e) { last_event = e; }
 
 sapp_desc sokol_main(int argc, char *argv[]) {
   return (sapp_desc){

@@ -4,12 +4,11 @@
 // TIPS: Change this number as per your game requirements
 #define MAX_SPRITES 10000
 
-typedef struct texture {
-    uint32_t tex_id;
-    int width;
-    int height;
-    int chanels;
-} texture;
+typedef struct texture_desc {
+  int width;
+  int height;
+  int chanels;
+} texture_desc;
 
 // renderer_* functions are meant to be used internally
 void renderer_init(void);
@@ -22,6 +21,6 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
                float clr_g, float clr_b);
 
 // load a texture
-texture load_texture(const char *file);
+texture_desc load_texture(const char *file);
 
 #endif

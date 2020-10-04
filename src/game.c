@@ -2,9 +2,9 @@
 #include "core/renderer.h"
 
 #define MAX_RECTS 10000
-#include <time.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 struct rectangle {
   float x;
@@ -45,7 +45,7 @@ void update(void) {
 
   double laptime = stm_ms(stm_laptime(&last_time));
   timer += laptime;
-  if(timer >= 1000.0) {
+  if (timer >= 1000.0) {
     printf("FPS: %f\n", 1000.0 / laptime);
     timer = 0.0;
   }
@@ -60,16 +60,16 @@ void draw(void) {
 
 void event(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
-    if(rect_count < MAX_RECTS) {
+    if (rect_count < MAX_RECTS) {
       recs[rect_count].x = e->mouse_x;
-      recs[rect_count].y = 720  - e->mouse_y;
+      recs[rect_count].y = 720 - e->mouse_y;
       recs[rect_count].w = 50.0;
       recs[rect_count].h = 50.0;
-      recs[rect_count].r = (float)rand()/(float)(RAND_MAX);
-      recs[rect_count].g = (float)rand()/(float)(RAND_MAX);
-      recs[rect_count].b = (float)rand()/(float)(RAND_MAX);
-      recs[rect_count].dx = (float)rand()/(float)(RAND_MAX) - 0.5f;
-      recs[rect_count].dy = (float)rand()/(float)(RAND_MAX) - 0.5f;
+      recs[rect_count].r = (float)rand() / (float)(RAND_MAX);
+      recs[rect_count].g = (float)rand() / (float)(RAND_MAX);
+      recs[rect_count].b = (float)rand() / (float)(RAND_MAX);
+      recs[rect_count].dx = (float)rand() / (float)(RAND_MAX)-0.5f;
+      recs[rect_count].dy = (float)rand() / (float)(RAND_MAX)-0.5f;
       rect_count += 1;
     }
   }
@@ -79,7 +79,7 @@ void frame(const sapp_event *e) {
   if (did_init == 0) {
     init();
   }
-  if(e != NULL){
+  if (e != NULL) {
     event(e);
   }
   update();

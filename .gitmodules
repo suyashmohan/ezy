@@ -7,3 +7,6 @@
 [submodule "libs/Handmade-Math"]
 	path = libs/Handmade-Math
 	url = https://github.com/HandmadeMath/Handmade-Math
+[submodule "tools/sokol-tools-bin"]
+	path = tools/sokol-tools-bin
+	url = https://github.com/floooh/sokol-tools-bin.git

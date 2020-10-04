@@ -5,6 +5,7 @@
 #define SOKOL_IMPL
 #define SOKOL_GLCORE33
 #define HANDMADE_MATH_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #include "core.h"
 
 #endif

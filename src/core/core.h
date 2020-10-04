@@ -8,5 +8,6 @@
 #include "../../libs/sokol/sokol_glue.h"
 #include "../../libs/sokol/sokol_time.h"
 #include "../../libs/Handmade-Math/HandmadeMath.h"
+#include "../../libs/stb/stb_image.h"
 
 #endif

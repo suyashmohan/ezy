@@ -14,6 +14,8 @@ typedef struct vertex_desc_t {
   float clr_g;
   float clr_b;
   float clr_a;
+  float tex_u;
+  float tex_v;
 } vertex_desc_t;
 
 sg_bindings bind;
@@ -40,6 +42,7 @@ void renderer_init(void) {
   bind = (sg_bindings){
       .vertex_buffers[0] = vbuf,
       .index_buffer = ibuf,
+      .fs_images[SLOT_tex] = sg_alloc_image(),
   };
 
   sg_shader shd = sg_make_shader(sprite_shader_desc());
@@ -53,6 +56,8 @@ void renderer_init(void) {
                                                    SG_VERTEXFORMAT_FLOAT2},
                          [ATTR_vs_color0] = {.offset = 2 * sizeof(float),
                                              .format = SG_VERTEXFORMAT_FLOAT4},
+                         [ATTR_vs_texcoord0] = {.offset = 6 * sizeof(float),
+                                            .format = SG_VERTEXFORMAT_FLOAT2},
                      }},
       .blend = {.enabled = true,
                 .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
@@ -101,13 +106,13 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
     return;
   }
   int v = vertices_count;
-  vertices[v + 0] = (vertex_desc_t){posx, posy, clr_r, clr_g, clr_b, 1.5f};
+  vertices[v + 0] = (vertex_desc_t){posx, posy, clr_r, clr_g, clr_b, 1.0f, 0.0f, 0.0f};
   vertices[v + 1] =
-      (vertex_desc_t){posx + width, posy, clr_r, clr_g, clr_b, 1.5f};
+      (vertex_desc_t){posx + width, posy, clr_r, clr_g, clr_b, 1.0f, 1.0f, 0.0f};
   vertices[v + 2] =
-      (vertex_desc_t){posx + width, posy - height, clr_r, clr_g, clr_b, 1.5f};
+      (vertex_desc_t){posx + width, posy - height, clr_r, clr_g, clr_b, 1.0f, 1.0f, 1.0f};
   vertices[v + 3] =
-      (vertex_desc_t){posx, posy - height, clr_r, clr_g, clr_b, 1.5f};
+      (vertex_desc_t){posx, posy - height, clr_r, clr_g, clr_b, 1.0f, 0.0f, 1.0f};
   vertices_count += 4;
 
   int i = indices_count;
@@ -118,4 +123,39 @@ void draw_quad(float posx, float posy, float width, float height, float clr_r,
   indices[i + 4] = v + 2;
   indices[i + 5] = v + 3;
   indices_count += 6;
+}
+
+texture load_texture(const char *file) {
+  texture tex;
+
+  int desired_channels = 4;
+  int imgW, imgH, nrChannels;
+  // stbi_set_flip_vertically_on_load(true);
+  unsigned char *data = stbi_load(file, &imgW, &imgH, &nrChannels, desired_channels);
+  if (!data) {
+    printf("Unabel to load image: %s\n", file);
+    exit(EXIT_FAILURE);
+  }
+  printf("Image Loaded : %s - %dx%d [%d bits]\n", file, imgW, imgH,
+         desired_channels * 8);
+
+  sg_init_image(bind.fs_images[SLOT_tex], &(sg_image_desc){
+    .width = imgW,
+    .height = imgH,
+    .pixel_format = SG_PIXELFORMAT_RGBA8,
+    .min_filter = SG_FILTER_LINEAR,
+    .mag_filter = SG_FILTER_LINEAR,
+    .content.subimage[0][0] = {
+      .ptr = data,
+      .size = imgW * imgH * 4,
+    } 
+  });
+
+  stbi_image_free(data);
+
+  tex.width = imgW;
+  tex.height = imgH;
+  tex.chanels = desired_channels;
+
+  return tex;
 }

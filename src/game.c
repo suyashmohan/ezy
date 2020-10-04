@@ -28,6 +28,7 @@ void init(void) {
   did_init = 1;
   srand(time(NULL));
   stm_setup();
+  load_texture("assets/flare.png");
 }
 
 void update(void) {
@@ -58,20 +59,18 @@ void draw(void) {
 }
 
 void event(const sapp_event *e) {
-  if (e->type == SAPP_EVENTTYPE_MOUSE_DOWN) {
-    if(e->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
-      if(rect_count < MAX_RECTS) {
-        recs[rect_count].x = 1280.0 / 2.0 - 25.0;
-        recs[rect_count].y = 720.0 / 2.0 - 25.0;
-        recs[rect_count].w = 50.0;
-        recs[rect_count].h = 50.0;
-        recs[rect_count].r = (float)rand()/(float)(RAND_MAX);
-        recs[rect_count].g = (float)rand()/(float)(RAND_MAX);
-        recs[rect_count].b = (float)rand()/(float)(RAND_MAX);
-        recs[rect_count].dx = (float)rand()/(float)(RAND_MAX) - 0.5f;
-        recs[rect_count].dy = (float)rand()/(float)(RAND_MAX) - 0.5f;
-        rect_count += 1;
-      }
+  if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
+    if(rect_count < MAX_RECTS) {
+      recs[rect_count].x = e->mouse_x;
+      recs[rect_count].y = 720  - e->mouse_y;
+      recs[rect_count].w = 50.0;
+      recs[rect_count].h = 50.0;
+      recs[rect_count].r = (float)rand()/(float)(RAND_MAX);
+      recs[rect_count].g = (float)rand()/(float)(RAND_MAX);
+      recs[rect_count].b = (float)rand()/(float)(RAND_MAX);
+      recs[rect_count].dx = (float)rand()/(float)(RAND_MAX) - 0.5f;
+      recs[rect_count].dy = (float)rand()/(float)(RAND_MAX) - 0.5f;
+      rect_count += 1;
     }
   }
 }

@@ -21,6 +21,7 @@ void app_frame(void) {
   renderer_draw();
   sg_end_pass();
   sg_commit();
+  last_event = NULL;
 }
 
 void app_cleanup(void) {

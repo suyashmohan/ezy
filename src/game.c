@@ -58,8 +58,8 @@ void draw(void) {
 }
 
 void event(const sapp_event *e) {
-  if (e->type == SAPP_EVENTTYPE_KEY_DOWN) {
-    if(e->key_code == SAPP_KEYCODE_DOWN) {
+  if (e->type == SAPP_EVENTTYPE_MOUSE_DOWN) {
+    if(e->mouse_button == SAPP_MOUSEBUTTON_LEFT) {
       if(rect_count < MAX_RECTS) {
         recs[rect_count].x = 1280.0 / 2.0 - 25.0;
         recs[rect_count].y = 720.0 / 2.0 - 25.0;

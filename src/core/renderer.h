@@ -37,6 +37,12 @@ typedef struct sprite_renderer_desc {
   int indices_count;
 } sprite_renderer_desc;
 
+typedef enum quad_type {
+  EZY_QUAD_TEXTURE = 0,
+  EZY_QUAD_TEXTURE_COLOR,
+  EZY_QUAD_COLOR,
+} quad_type;
+
 typedef struct quad_desc {
   float x;
   float y;
@@ -46,6 +52,11 @@ typedef struct quad_desc {
   float g;
   float b;
   float a;
+  float src_x;
+  float src_y;
+  float src_w;
+  float src_h;
+  quad_type type;
 } quad_desc;
 
 // renderer_* functions are meant to be used internally

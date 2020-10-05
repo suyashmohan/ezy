@@ -135,15 +135,34 @@ void _sprite_renderer_update(sprite_renderer_desc *sprt, quad_desc *quads,
     float p1y = quads[q].y;
     float p2x = quads[q].x + quads[q].w;
     float p2y = quads[q].y + quads[q].h;
-    float r = quads[q].r;
-    float g = quads[q].g;
-    float b = quads[q].b;
-    float a = quads[q].a;
 
-    sprt->vertices[v + 0] = (vertex_desc_t){p1x, p1y, r, g, b, a, 0.0f, 0.0f};
-    sprt->vertices[v + 1] = (vertex_desc_t){p2x, p1y, r, g, b, a, 1.0f, 0.0f};
-    sprt->vertices[v + 2] = (vertex_desc_t){p2x, p2y, r, g, b, a, 1.0f, 1.0f};
-    sprt->vertices[v + 3] = (vertex_desc_t){p1x, p2y, r, g, b, a, 0.0f, 1.0f};
+    float r, g, b, a;
+    r = g = b = a = 1.0f;
+    if (quads[q].type == EZY_QUAD_TEXTURE_COLOR ||
+        quads[q].type == EZY_QUAD_COLOR) {
+      r = quads[q].r;
+      g = quads[q].g;
+      b = quads[q].b;
+      a = quads[q].a;
+    }
+
+    float tex_x, tex_y, tex_w, tex_h;
+    tex_x = tex_y = 0.0f;
+    tex_w = tex_h = 1.0f;
+    if (quads[q].type == EZY_QUAD_TEXTURE ||
+        quads[q].type == EZY_QUAD_TEXTURE_COLOR) {
+      if (quads[q].src_w != 0 && quads[q].src_h != 0) {
+        tex_x = quads[q].src_x / sprt->texture.width;
+        tex_y = quads[q].src_y / sprt->texture.height;
+        tex_w = (quads[q].src_x + quads[q].src_w) / sprt->texture.width;
+        tex_h = (quads[q].src_y + quads[q].src_h) / sprt->texture.height;
+      }
+    }
+
+    sprt->vertices[v + 0] = (vertex_desc_t){p1x, p1y, r, g, b, a, tex_x, tex_y};
+    sprt->vertices[v + 1] = (vertex_desc_t){p2x, p1y, r, g, b, a, tex_w, tex_y};
+    sprt->vertices[v + 2] = (vertex_desc_t){p2x, p2y, r, g, b, a, tex_w, tex_h};
+    sprt->vertices[v + 3] = (vertex_desc_t){p1x, p2y, r, g, b, a, tex_x, tex_h};
     sprt->vertices_count += 4;
 
     int i = sprt->indices_count;

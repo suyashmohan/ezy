@@ -53,6 +53,7 @@ void event(const sapp_event *e) {
       recs[rect_count].g = (float)rand() / (float)(RAND_MAX);
       recs[rect_count].b = (float)rand() / (float)(RAND_MAX);
       recs[rect_count].a = 1.0f;
+      recs[rect_count].type = EZY_QUAD_TEXTURE_COLOR;
       recs_dxy[rect_count].dx = (float)rand() / (float)(RAND_MAX)-0.5f;
       recs_dxy[rect_count].dy = (float)rand() / (float)(RAND_MAX)-0.5f;
       rect_count += 1;
@@ -67,7 +68,7 @@ void update(void) {
     if (recs[i].x < 0 || recs[i].x + recs[i].w > 1280.0) {
       recs_dxy[i].dx *= -1;
     }
-    if (recs[i].y < recs[i].h || recs[i].y > 720.0) {
+    if (recs[i].y < 0 || recs[i].y + recs[i].h > 720.0) {
       recs_dxy[i].dy *= -1;
     }
   }

@@ -12,20 +12,19 @@ void app_init(void) {
       (sg_pass_action){.colors[0] = {.action = SG_ACTION_CLEAR,
                                      .val = {0.0f, 0.0f, 0.0f, 1.0f}}};
   renderer_init();
+  start();
 }
 
 void app_frame(void) {
   sg_begin_default_pass(&pass_action, sapp_width(), sapp_height());
-  renderer_draw_setup();
   frame(last_event);
-  renderer_draw();
   sg_end_pass();
   sg_commit();
   last_event = NULL;
 }
 
-void app_cleanup(void) {
-  renderer_shutdown();
+void app_cleanup(void) { 
+  end();
   sg_shutdown();
 }
 

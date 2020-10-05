@@ -1,14 +1,15 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-/*
-On every frame, `frame` function will be called.
-This function must be implemented and this is where game logic goes.
-`frame` will get reference to events passed from sokol library.
-*/
-
 #include "core/core.h"
 
+// called on every frame. Handle input and render here
 void frame(const sapp_event *e);
+
+// called at the start of game. Use to initialise resources
+void start(void);
+
+// called at the end of game. Use to free resources
+void end(void);
 
 #endif

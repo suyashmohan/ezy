@@ -12,11 +12,11 @@ void start(void) {
 
 void frame(const sapp_event *e) {
   if (e != NULL && e->type == SAPP_EVENTTYPE_KEY_UP) {
-    if (e->key_code == SAPP_KEYCODE_LEFT) {
+    if (e->key_code == SAPP_KEYCODE_1) {
       example = 1;
-    } else if (e->key_code == SAPP_KEYCODE_RIGHT) {
+    } else if (e->key_code == SAPP_KEYCODE_2) {
       example = 2;
-    } else if (e->key_code == SAPP_KEYCODE_DOWN) {
+    } else if (e->key_code == SAPP_KEYCODE_0) {
       example = 0;
     }
   }

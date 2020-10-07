@@ -7,14 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void _sprite_renderer_update(sprite_renderer_desc *sprt, quad_desc *quads,
-                             uint32_t quad_count);
-
-sg_pipeline pip;
+static struct { sg_pipeline pip; } state;
 
 void renderer_init(void) {
   sg_shader shd = sg_make_shader(sprite_shader_desc());
-  pip = sg_make_pipeline(&(sg_pipeline_desc){
+  state.pip = sg_make_pipeline(&(sg_pipeline_desc){
       .shader = shd,
       .index_type = SG_INDEXTYPE_UINT16,
       .layout =
@@ -33,7 +30,7 @@ void renderer_init(void) {
   });
 }
 
-void sprite_renderer_create(sprite_renderer_desc *sprt) {
+void spritebatch_create(spritebatch_desc *sprt) {
   if (sprt->max_quads == 0) {
     sprt->max_quads = MAX_QUADS;
   }
@@ -91,87 +88,82 @@ void sprite_renderer_create(sprite_renderer_desc *sprt) {
   sprt->indices = (uint16_t *)malloc(sprt->max_quads * 6 * sizeof(uint16_t));
 }
 
-void sprite_renderer_destroy(sprite_renderer_desc *sprt) {
+void spritebatch_destroy(spritebatch_desc *sprt) {
   free(sprt->vertices);
   free(sprt->indices);
 }
 
-void sprite_renderer_draw(sprite_renderer_desc *sprt, quad_desc *quads,
-                          uint32_t quad_count) {
-  _sprite_renderer_update(sprt, quads, quad_count);
-
-  sg_update_buffer(sprt->bind.vertex_buffers[0], sprt->vertices,
-                   sprt->vertices_count * sizeof(vertex_desc_t));
-  sg_update_buffer(sprt->bind.index_buffer, sprt->indices,
-                   sprt->indices_count * sizeof(uint16_t));
-
-  sg_apply_pipeline(pip);
-  sg_apply_bindings(&(sprt->bind));
-
-  vs_params_t vs_params;
-  vs_params.proj = HMM_Orthographic(0.0, (float)sapp_width(),
-                                    (float)sapp_height(), 0.0, 0.0, 1.0);
-  sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, &vs_params,
-                    sizeof(vs_params));
-
-  sg_draw(0, sprt->indices_count, 1);
-}
-
-void _sprite_renderer_update(sprite_renderer_desc *sprt, quad_desc *quads,
-                             uint32_t quad_count) {
-  sprt->vertices_count = 0;
-  sprt->indices_count = 0;
-  if (quad_count > sprt->max_quads) {
-    printf("Illegal Usage. Quad count(%d) higher than max quads(%d)\n",
-           quad_count, sprt->max_quads);
+void spritebatch_draw(spritebatch_desc *sprt, quad_desc quad) {
+  if (sprt->vertices_count > sprt->max_quads * 4) {
+    printf(
+        "Illegal Usage. Vertices Count(%d) higher than reserved vertices(%d)\n",
+        sprt->vertices_count, sprt->max_quads * 4);
     exit(EXIT_FAILURE);
     return;
   }
 
-  for (int q = 0; q < quad_count; ++q) {
-    int v = sprt->vertices_count;
+  int v = sprt->vertices_count;
 
-    float p1x = quads[q].x;
-    float p1y = quads[q].y;
-    float p2x = quads[q].x + quads[q].w;
-    float p2y = quads[q].y + quads[q].h;
+  float p1x = quad.x;
+  float p1y = quad.y;
+  float p2x = quad.x + quad.w;
+  float p2y = quad.y + quad.h;
 
-    float r, g, b, a;
-    r = g = b = a = 1.0f;
-    if (quads[q].type == EZY_QUAD_TEXTURE_COLOR ||
-        quads[q].type == EZY_QUAD_COLOR) {
-      r = quads[q].r;
-      g = quads[q].g;
-      b = quads[q].b;
-      a = quads[q].a;
+  float r, g, b, a;
+  r = g = b = a = 1.0f;
+  if (quad.type == EZY_QUAD_TEXTURE_COLOR || quad.type == EZY_QUAD_COLOR) {
+    r = quad.r;
+    g = quad.g;
+    b = quad.b;
+    a = quad.a;
+  }
+
+  float tex_x, tex_y, tex_w, tex_h;
+  tex_x = tex_y = 0.0f;
+  tex_w = tex_h = 1.0f;
+  if (quad.type == EZY_QUAD_TEXTURE || quad.type == EZY_QUAD_TEXTURE_COLOR) {
+    if (quad.src_w != 0 && quad.src_h != 0) {
+      tex_x = quad.src_x / sprt->texture.width;
+      tex_y = quad.src_y / sprt->texture.height;
+      tex_w = (quad.src_x + quad.src_w) / sprt->texture.width;
+      tex_h = (quad.src_y + quad.src_h) / sprt->texture.height;
     }
+  }
 
-    float tex_x, tex_y, tex_w, tex_h;
-    tex_x = tex_y = 0.0f;
-    tex_w = tex_h = 1.0f;
-    if (quads[q].type == EZY_QUAD_TEXTURE ||
-        quads[q].type == EZY_QUAD_TEXTURE_COLOR) {
-      if (quads[q].src_w != 0 && quads[q].src_h != 0) {
-        tex_x = quads[q].src_x / sprt->texture.width;
-        tex_y = quads[q].src_y / sprt->texture.height;
-        tex_w = (quads[q].src_x + quads[q].src_w) / sprt->texture.width;
-        tex_h = (quads[q].src_y + quads[q].src_h) / sprt->texture.height;
-      }
-    }
+  sprt->vertices[v + 0] = (vertex_desc_t){p1x, p1y, r, g, b, a, tex_x, tex_y};
+  sprt->vertices[v + 1] = (vertex_desc_t){p2x, p1y, r, g, b, a, tex_w, tex_y};
+  sprt->vertices[v + 2] = (vertex_desc_t){p2x, p2y, r, g, b, a, tex_w, tex_h};
+  sprt->vertices[v + 3] = (vertex_desc_t){p1x, p2y, r, g, b, a, tex_x, tex_h};
+  sprt->vertices_count += 4;
 
-    sprt->vertices[v + 0] = (vertex_desc_t){p1x, p1y, r, g, b, a, tex_x, tex_y};
-    sprt->vertices[v + 1] = (vertex_desc_t){p2x, p1y, r, g, b, a, tex_w, tex_y};
-    sprt->vertices[v + 2] = (vertex_desc_t){p2x, p2y, r, g, b, a, tex_w, tex_h};
-    sprt->vertices[v + 3] = (vertex_desc_t){p1x, p2y, r, g, b, a, tex_x, tex_h};
-    sprt->vertices_count += 4;
+  int i = sprt->indices_count;
+  sprt->indices[i + 0] = v + 0;
+  sprt->indices[i + 1] = v + 1;
+  sprt->indices[i + 2] = v + 2;
+  sprt->indices[i + 3] = v + 0;
+  sprt->indices[i + 4] = v + 2;
+  sprt->indices[i + 5] = v + 3;
+  sprt->indices_count += 6;
+}
 
-    int i = sprt->indices_count;
-    sprt->indices[i + 0] = v + 0;
-    sprt->indices[i + 1] = v + 1;
-    sprt->indices[i + 2] = v + 2;
-    sprt->indices[i + 3] = v + 0;
-    sprt->indices[i + 4] = v + 2;
-    sprt->indices[i + 5] = v + 3;
-    sprt->indices_count += 6;
+void spritebatch_commit(spritebatch_desc *sprt) {
+  if (sprt->vertices_count > 0) {
+    sg_update_buffer(sprt->bind.vertex_buffers[0], sprt->vertices,
+                     sprt->vertices_count * sizeof(vertex_desc_t));
+    sg_update_buffer(sprt->bind.index_buffer, sprt->indices,
+                     sprt->indices_count * sizeof(uint16_t));
+
+    sg_apply_pipeline(state.pip);
+    sg_apply_bindings(&(sprt->bind));
+
+    vs_params_t vs_params;
+    vs_params.proj = HMM_Orthographic(0.0, (float)sapp_width(),
+                                      (float)sapp_height(), 0.0, 0.0, 1.0);
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, &vs_params,
+                      sizeof(vs_params));
+
+    sg_draw(0, sprt->indices_count, 1);
+    sprt->vertices_count = 0;
+    sprt->indices_count = 0;
   }
 }

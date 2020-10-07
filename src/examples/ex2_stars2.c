@@ -13,7 +13,7 @@ struct velocity2 {
 int rect_count2 = 0;
 quad_desc recs2[MAX_RECTS];
 struct velocity2 recs_dxy2[MAX_RECTS];
-sprite_renderer_desc sprt2;
+spritebatch_desc sprt2;
 
 void event2(const sapp_event *e);
 void update2(void);
@@ -21,9 +21,9 @@ void draw2(void);
 
 void ex2_start(void) {
   printf("Starting Game\n");
-  sprt2 = (sprite_renderer_desc){.max_quads = MAX_RECTS,
-                                .texture = {.path = "assets/texture.png"}};
-  sprite_renderer_create(&sprt2);
+  sprt2 = (spritebatch_desc){.max_quads = MAX_RECTS,
+                             .texture = {.path = "assets/texture.png"}};
+  spritebatch_create(&sprt2);
 }
 
 void ex2_frame(const sapp_event *e) {
@@ -36,7 +36,7 @@ void ex2_frame(const sapp_event *e) {
 
 void ex2_end(void) {
   printf("Ending Game\n");
-  sprite_renderer_destroy(&sprt2);
+  spritebatch_destroy(&sprt2);
 }
 
 void event2(const sapp_event *e) {
@@ -76,4 +76,9 @@ void update2(void) {
   }
 }
 
-void draw2(void) { sprite_renderer_draw(&sprt2, recs2, rect_count2); }
+void draw2(void) {
+  for (int i = 0; i < rect_count2; i++) {
+    spritebatch_draw(&sprt2, recs2[i]);
+  }
+  spritebatch_commit(&sprt2);
+}

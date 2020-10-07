@@ -13,7 +13,7 @@ struct velocity {
 int rect_count = 0;
 quad_desc recs[MAX_RECTS];
 struct velocity recs_dxy[MAX_RECTS];
-sprite_renderer_desc sprt;
+spritebatch_desc sprt;
 
 void event(const sapp_event *e);
 void update(void);
@@ -21,9 +21,9 @@ void draw(void);
 
 void ex1_start(void) {
   printf("Starting Game\n");
-  sprt = (sprite_renderer_desc){.max_quads = MAX_RECTS,
-                                .texture = {.path = "assets/flare.png"}};
-  sprite_renderer_create(&sprt);
+  sprt = (spritebatch_desc){.max_quads = MAX_RECTS,
+                            .texture = {.path = "assets/flare.png"}};
+  spritebatch_create(&sprt);
 }
 
 void ex1_frame(const sapp_event *e) {
@@ -36,7 +36,7 @@ void ex1_frame(const sapp_event *e) {
 
 void ex1_end(void) {
   printf("Ending Game\n");
-  sprite_renderer_destroy(&sprt);
+  spritebatch_destroy(&sprt);
 }
 
 void event(const sapp_event *e) {
@@ -74,4 +74,9 @@ void update(void) {
   }
 }
 
-void draw(void) { sprite_renderer_draw(&sprt, recs, rect_count); }
+void draw(void) {
+  for (int i = 0; i < rect_count; i++) {
+    spritebatch_draw(&sprt, recs[i]);
+  }
+  spritebatch_commit(&sprt);
+}

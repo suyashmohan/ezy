@@ -26,7 +26,7 @@ typedef struct texture_desc {
   int chanels;
 } texture_desc;
 
-typedef struct sprite_renderer_desc {
+typedef struct spritebatch_desc {
   texture_desc texture;
   uint32_t max_quads;
   // For internal Use
@@ -35,7 +35,7 @@ typedef struct sprite_renderer_desc {
   uint16_t *indices;
   int vertices_count;
   int indices_count;
-} sprite_renderer_desc;
+} spritebatch_desc;
 
 typedef enum quad_type {
   EZY_QUAD_TEXTURE = 0,
@@ -63,9 +63,9 @@ typedef struct quad_desc {
 void renderer_init(void);
 
 // load a texture
-void sprite_renderer_create(sprite_renderer_desc *sprt);
-void sprite_renderer_destroy(sprite_renderer_desc *sprt);
-void sprite_renderer_draw(sprite_renderer_desc *sprt, quad_desc *quads,
-                          uint32_t quad_count);
+void spritebatch_create(spritebatch_desc *sprt);
+void spritebatch_destroy(spritebatch_desc *sprt);
+void spritebatch_draw(spritebatch_desc *sprt, quad_desc quads);
+void spritebatch_commit(spritebatch_desc *sprt);
 
 #endif

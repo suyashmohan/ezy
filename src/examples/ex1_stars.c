@@ -42,11 +42,11 @@ void ex1_end(void) {
 void event(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
     if (rect_count < MAX_RECTS) {
-      float w = sprt.texture.width / 2.0;
-      float h = sprt.texture.height / 2.0;
+      float w = sprt.texture.width / 2.0f;
+      float h = sprt.texture.height / 2.0f;
 
-      recs[rect_count].x = e->mouse_x - (w / 2.0);
-      recs[rect_count].y = e->mouse_y - (h / 2.0);
+      recs[rect_count].x = e->mouse_x - (w / 2.0f);
+      recs[rect_count].y = e->mouse_y - (h / 2.0f);
       recs[rect_count].w = w;
       recs[rect_count].h = h;
       recs[rect_count].r = (float)rand() / (float)(RAND_MAX);

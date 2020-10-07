@@ -42,11 +42,11 @@ void ex2_end(void) {
 void event2(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
     if (rect_count2 < MAX_RECTS) {
-      float w = 48.0;
-      float h = 48.0;
+      float w = 48.0f;
+      float h = 48.0f;
 
-      recs2[rect_count2].x = e->mouse_x - (w / 2.0);
-      recs2[rect_count2].y = e->mouse_y - (h / 2.0);
+      recs2[rect_count2].x = e->mouse_x - (w / 2.0f);
+      recs2[rect_count2].y = e->mouse_y - (h / 2.0f);
       recs2[rect_count2].w = w;
       recs2[rect_count2].h = h;
       recs2[rect_count2].r = (float)rand() / (float)(RAND_MAX);

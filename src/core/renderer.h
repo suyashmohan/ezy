@@ -21,9 +21,9 @@ typedef struct vertex_desc_t {
 
 typedef struct texture_desc {
   char path[FILEPATH_SIZE];
-  int width;
-  int height;
-  int chanels;
+  uint16_t width;
+  uint16_t height;
+  uint16_t chanels;
 } texture_desc;
 
 typedef struct spritebatch_desc {
@@ -33,8 +33,8 @@ typedef struct spritebatch_desc {
   sg_bindings bind;
   vertex_desc_t *vertices;
   uint16_t *indices;
-  int vertices_count;
-  int indices_count;
+  uint32_t vertices_count;
+  uint32_t indices_count;
 } spritebatch_desc;
 
 typedef enum quad_type {

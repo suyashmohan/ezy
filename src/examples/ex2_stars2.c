@@ -1,5 +1,5 @@
+#include "ex2_stars2.h"
 #include "../core/renderer.h"
-#include "ex1_stars.h"
 
 #define MAX_RECTS 10000
 #include <stdio.h>
@@ -45,20 +45,25 @@ void event2(const sapp_event *e) {
       float w = 48.0f;
       float h = 48.0f;
 
-      recs2[rect_count2].x = e->mouse_x - (w / 2.0f);
-      recs2[rect_count2].y = e->mouse_y - (h / 2.0f);
-      recs2[rect_count2].w = w;
-      recs2[rect_count2].h = h;
-      recs2[rect_count2].r = (float)rand() / (float)(RAND_MAX);
-      recs2[rect_count2].g = (float)rand() / (float)(RAND_MAX);
-      recs2[rect_count2].b = (float)rand() / (float)(RAND_MAX);
-      recs2[rect_count2].a = 1.0f;
-      recs2[rect_count2].src_y = (float)(rand() % 19) * 16.0f;
-      recs2[rect_count2].src_w = 16.0f;
-      recs2[rect_count2].src_h = 16.0f;
-      recs_dxy2[rect_count2].dx = (float)rand() / (float)(RAND_MAX)-0.5f;
-      recs_dxy2[rect_count2].dy = (float)rand() / (float)(RAND_MAX)-0.5f;
+      recs2[rect_count2] = (quad_desc){
+          .x = e->mouse_x - (w / 2.0f),
+          .y = e->mouse_y - (h / 2.0f),
+          .w = w,
+          .h = h,
+          .src_y = (float)(rand() % 19) * 16.0f,
+          .src_w = 16.0f,
+          .src_h = 16.0f,
+      };
+
+      recs_dxy2[rect_count2] =
+          (struct velocity2){
+              .dx = (float)rand() / (float)(RAND_MAX)-0.5f,
+              .dy = (float)rand() / (float)(RAND_MAX)-0.5f,
+          },
+
       rect_count2 += 1;
+
+      printf("Total Smileys: %d\n", rect_count2);
     }
   }
 }

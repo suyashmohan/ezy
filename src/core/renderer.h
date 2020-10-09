@@ -19,8 +19,29 @@ typedef struct vertex_desc_t {
   float tex_v;
 } vertex_desc_t;
 
+typedef struct font_texture_desc {
+  const char *filepath;
+  int line_height;
+} font_texture_desc;
+
+typedef struct font_texture {
+  unsigned char *bitmap;
+  int width;
+  int height;
+  int line_height;
+  int word_x[96];
+  char word[96];
+} font_texture;
+
+typedef enum texture_type {
+  TEXTURE_SPRITESHEET = 0,
+  TEXTURE_FONT,
+} texture_type;
+
 typedef struct texture_desc {
+  texture_type type;
   char path[FILEPATH_SIZE];
+  font_texture font;
   uint16_t width;
   uint16_t height;
   uint16_t chanels;
@@ -62,10 +83,16 @@ typedef struct quad_desc {
 // renderer_* functions are meant to be used internally
 void renderer_init(void);
 
-// load a texture
+// spritebatch functions
 void spritebatch_create(spritebatch_desc *sprt);
 void spritebatch_destroy(spritebatch_desc *sprt);
 void spritebatch_draw(spritebatch_desc *sprt, quad_desc quads);
 void spritebatch_commit(spritebatch_desc *sprt);
+
+// font functions
+font_texture spritefont_create(font_texture_desc desc);
+void spritefont_destroy(font_texture *font);
+void spritefont_draw(spritebatch_desc *sprt, char str[], float x, float y,
+                     float scale);
 
 #endif

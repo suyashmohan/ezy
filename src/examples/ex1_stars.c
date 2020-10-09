@@ -11,6 +11,7 @@ struct velocity {
 } velocity;
 
 int rect_count = 0;
+int rect_add_count = 10;
 quad_desc recs[MAX_RECTS];
 struct velocity recs_dxy[MAX_RECTS];
 spritebatch_desc sprt;
@@ -45,19 +46,28 @@ void event(const sapp_event *e) {
       float w = sprt.texture.width / 2.0f;
       float h = sprt.texture.height / 2.0f;
 
-      recs[rect_count].x = e->mouse_x - (w / 2.0f);
-      recs[rect_count].y = e->mouse_y - (h / 2.0f);
-      recs[rect_count].w = w;
-      recs[rect_count].h = h;
-      recs[rect_count].r = (float)rand() / (float)(RAND_MAX);
-      recs[rect_count].g = (float)rand() / (float)(RAND_MAX);
-      recs[rect_count].b = (float)rand() / (float)(RAND_MAX);
-      recs[rect_count].a = 1.0f;
-      recs[rect_count].type = EZY_QUAD_TEXTURE_COLOR;
-      recs_dxy[rect_count].dx = (float)rand() / (float)(RAND_MAX)-0.5f;
-      recs_dxy[rect_count].dy = (float)rand() / (float)(RAND_MAX)-0.5f;
-      rect_count += 1;
+      for (int i = 0; i < rect_add_count; ++i) {
+        recs[rect_count] = (quad_desc){
+            .x = e->mouse_x - (w / 2.0f),
+            .y = e->mouse_y - (h / 2.0f),
+            .w = w,
+            .h = h,
+            .r = (float)rand() / (float)(RAND_MAX),
+            .g = (float)rand() / (float)(RAND_MAX),
+            .b = (float)rand() / (float)(RAND_MAX),
+            .a = 1.0f,
+            .type = EZY_QUAD_TEXTURE_COLOR,
+        };
+
+        recs_dxy[rect_count] = (struct velocity){
+            .dx = (float)rand() / (float)(RAND_MAX)-0.5f,
+            .dy = (float)rand() / (float)(RAND_MAX)-0.5f,
+        };
+
+        rect_count += 1;
+      }
     }
+    printf("Total Stars: %d\n", rect_count);
   }
 }
 

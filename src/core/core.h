@@ -9,5 +9,6 @@
 #include "../../libs/sokol/sokol_glue.h"
 #include "../../libs/sokol/sokol_time.h"
 #include "../../libs/stb/stb_image.h"
+#include "../../libs/stb/stb_truetype.h"
 
 #endif

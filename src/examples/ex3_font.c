@@ -15,41 +15,13 @@ uint64_t last_time = 0;
 double elapsed_time = 0.0;
 int frame_count = 0;
 
-/* reverse:  reverse string s in place */
-void reverse(char s[]) {
-  int i, j;
-  char c;
-
-  for (i = 0, j = strlen(s) - 1; i < j; i++, j--) {
-    c = s[i];
-    s[i] = s[j];
-    s[j] = c;
-  }
-}
-
-/* itoa:  convert n to characters in s */
-void itoa(int n, char s[]) {
-  int i, sign;
-
-  if ((sign = n) < 0) /* record sign */
-    n = -n;           /* make n positive */
-  i = 0;
-  do {                     /* generate digits in reverse order */
-    s[i++] = n % 10 + '0'; /* get next digit */
-  } while ((n /= 10) > 0); /* delete it */
-  if (sign < 0)
-    s[i++] = '-';
-  s[i] = '\0';
-  reverse(s);
-}
-
 void ex3_start(void) {
   printf("Starting Game\n");
   font = spritefont_create((font_texture_desc){
       .filepath = "assets/monogram_extended.ttf", .line_height = 48});
 
   sprt3 = (spritebatch_desc){.max_quads = MAX_RECTS,
-                             .texture = {.type = TEXTURE_FONT, .font = font}};
+                             .texture = {.type = EZY_TEXTURE_FONT, .font = font}};
   spritebatch_create(&sprt3);
 
   stm_setup();
@@ -79,10 +51,8 @@ void ex3_frame(const sapp_event *e) {
     frame_count += 1;
   }
 
-  char fps_str[10] = " FPS: ";
-  char fps_count[4];
-  itoa(fps, fps_count);
-  strcat(fps_str, fps_count);
+  char fps_str[10];
+  sprintf(fps_str, "FPS: %d", fps);
   spritefont_draw(&sprt3, "Hello World", 50.0, 100.0f, 1.0f);
   spritefont_draw(&sprt3, fps_str, 0.0, 0.0f, 1.0f);
   spritebatch_commit(&sprt3);
@@ -91,5 +61,4 @@ void ex3_frame(const sapp_event *e) {
 void ex3_end(void) {
   printf("Ending Game\n");
   spritebatch_destroy(&sprt3);
-  spritefont_destroy(&font);
 }

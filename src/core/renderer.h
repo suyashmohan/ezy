@@ -21,21 +21,21 @@ typedef struct vertex_desc_t {
 
 typedef struct font_texture_desc {
   const char *filepath;
-  int line_height;
+  uint16_t line_height;
 } font_texture_desc;
 
 typedef struct font_texture {
   unsigned char *bitmap;
-  int width;
-  int height;
-  int line_height;
-  int word_x[96];
+  uint16_t width;
+  uint16_t height;
+  uint16_t line_height;
+  uint16_t word_x[96];
   char word[96];
 } font_texture;
 
 typedef enum texture_type {
-  TEXTURE_SPRITESHEET = 0,
-  TEXTURE_FONT,
+  EZY_TEXTURE_SPRITESHEET = 0,
+  EZY_TEXTURE_FONT,
 } texture_type;
 
 typedef struct texture_desc {
@@ -91,7 +91,6 @@ void spritebatch_commit(spritebatch_desc *sprt);
 
 // font functions
 font_texture spritefont_create(font_texture_desc desc);
-void spritefont_destroy(font_texture *font);
 void spritefont_draw(spritebatch_desc *sprt, char str[], float x, float y,
                      float scale);
 

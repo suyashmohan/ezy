@@ -55,7 +55,7 @@ void spritebatch_create(spritebatch_desc *sprt) {
       .fs_images[SLOT_tex] = sg_alloc_image(),
   };
 
-  if (sprt->texture.type == TEXTURE_SPRITESHEET) {
+  if (sprt->texture.type == EZY_TEXTURE_SPRITESHEET) {
     int imgW, imgH, nrChannels;
     int desired_channels = 4;
     // stbi_set_flip_vertically_on_load(true);
@@ -85,13 +85,13 @@ void spritebatch_create(spritebatch_desc *sprt) {
       exit(EXIT_FAILURE);
       return;
     }
-  } else if (sprt->texture.type == TEXTURE_FONT) {
+  } else if (sprt->texture.type == EZY_TEXTURE_FONT) {
     int imgW, imgH;
     imgW = sprt->texture.font.width;
     imgH = sprt->texture.font.height;
 
-    unsigned int sz = imgW * imgH;
-    unsigned char bitmap2[sz * 4];
+    uint32_t sz = imgW * imgH;
+    unsigned char *bitmap2 = malloc(sz * 4);
     for (unsigned int i = 0; i < sz; ++i) {
       bitmap2[i * 4 + 0] = 255;
       bitmap2[i * 4 + 1] = 255;
@@ -115,6 +115,8 @@ void spritebatch_create(spritebatch_desc *sprt) {
     sprt->texture.width = imgW;
     sprt->texture.height = imgH;
     sprt->texture.chanels = 1;
+    free(bitmap2);
+    free(sprt->texture.font.bitmap);
   }
 
   sprt->vertices_count = 0;
@@ -245,11 +247,11 @@ font_texture spritefont_create(font_texture_desc desc) {
   font.line_height = desc.line_height;
   int l_h = desc.line_height; /* line height */
   /* calculate font scaling */
-  float scale = stbtt_ScaleForPixelHeight(&info, l_h);
+  float scale = stbtt_ScaleForPixelHeight(&info, (float)l_h);
   int ascent, descent, lineGap;
   stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
-  ascent = roundf(ascent * scale);
-  descent = roundf(descent * scale);
+  ascent = (int)roundf(ascent * scale);
+  descent = (int)roundf(descent * scale);
 
   int x = 0;
   int i;
@@ -262,12 +264,12 @@ font_texture spritefont_create(font_texture_desc desc) {
     stbtt_GetCodepointHMetrics(&info, font.word[i], &ax, &lsb);
 
     /* advance x */
-    x += roundf(ax * scale);
+    x += (int)roundf(ax * scale);
 
     /* add kerning */
     int kern;
     kern = stbtt_GetCodepointKernAdvance(&info, font.word[i], font.word[i + 1]);
-    x += roundf(kern * scale);
+    x += (int)roundf(kern * scale);
   }
 
   int b_w = x;   /* bitmap width */
@@ -296,17 +298,17 @@ font_texture spritefont_create(font_texture_desc desc) {
     int y = ascent + c_y1;
 
     /* render character (stride and offset is important here) */
-    int byteOffset = x + roundf(lsb * scale) + (y * b_w);
+    int byteOffset = x + (int)roundf(lsb * scale) + (y * b_w);
     stbtt_MakeCodepointBitmap(&info, font.bitmap + byteOffset, c_x2 - c_x1,
                               c_y2 - c_y1, b_w, scale, scale, font.word[i]);
 
     /* advance x */
-    x += roundf(ax * scale);
+    x += (int)roundf(ax * scale);
 
     /* add kerning */
     int kern;
     kern = stbtt_GetCodepointKernAdvance(&info, font.word[i], font.word[i + 1]);
-    x += roundf(kern * scale);
+    x += (int)roundf(kern * scale);
     font.word_x[i + 1] = x;
   }
 
@@ -319,7 +321,7 @@ void spritefont_destroy(font_texture *font) { free(font->bitmap); }
 
 void spritefont_draw(spritebatch_desc *sprt, char str[], float x, float y,
                      float scale) {
-  int len = strlen(str);
+  size_t len = strlen(str);
   float dx = 0;
   int i;
   for (i = 0; i < len; ++i) {
@@ -331,11 +333,11 @@ void spritefont_draw(spritebatch_desc *sprt, char str[], float x, float y,
     quad_desc quad = {
         .x = x + dx,
         .y = y,
-        .w = cw * scale,
+        .w = (float)cw * scale,
         .h = sprt->texture.font.line_height * scale,
-        .src_x = cx,
-        .src_w = cw,
-        .src_h = sprt->texture.font.line_height,
+        .src_x = (float)cx,
+        .src_w = (float)cw,
+        .src_h = (float)sprt->texture.font.line_height,
     };
     dx += quad.w;
     spritebatch_draw(sprt, quad);

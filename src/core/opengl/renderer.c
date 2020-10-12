@@ -27,7 +27,15 @@ void renderer_init(void) {
                }},
       .blend = {.enabled = true,
                 .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
-                .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA},
+                .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+      },
+      .depth_stencil = {
+                .depth_compare_func = SG_COMPAREFUNC_LESS_EQUAL,
+                .depth_write_enabled = true,
+      },
+      .rasterizer = {
+          .cull_mode = SG_CULLMODE_BACK,
+      },
   });
 }
 

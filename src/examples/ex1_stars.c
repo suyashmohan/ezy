@@ -27,12 +27,13 @@ void ex1_start(void) {
   spritebatch_create(&sprt);
 }
 
-void ex1_frame(const sapp_event *e) {
+int ex1_frame(const sapp_event *e) {
   if (e != NULL) {
     event(e);
   }
   update();
   draw();
+  return rect_count;
 }
 
 void ex1_end(void) {

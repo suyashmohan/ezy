@@ -40,7 +40,7 @@ void ex3_start(void) {
   */
 }
 
-void ex3_frame(const sapp_event *e) {
+void ex3_frame(const sapp_event *e, int rects) {
   const double delta = stm_ms(stm_laptime(&last_time));
   elapsed_time += delta;
   if (elapsed_time > 1000.0) {
@@ -52,9 +52,12 @@ void ex3_frame(const sapp_event *e) {
   }
 
   char fps_str[10];
+  char rects_str[10];
   sprintf(fps_str, "FPS: %d", fps);
+  sprintf(rects_str, "%d", rects);
   spritefont_draw(&sprt3, "Hello World", 50.0, 100.0f, 1.0f);
   spritefont_draw(&sprt3, fps_str, 0.0, 0.0f, 1.0f);
+  spritefont_draw(&sprt3, rects_str, 0.0, 48.0f, 1.0f);
   spritebatch_commit(&sprt3);
 }
 

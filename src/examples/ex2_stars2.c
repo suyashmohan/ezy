@@ -11,6 +11,7 @@ struct velocity2 {
 } velocity2;
 
 int rect_count2 = 0;
+int rect_add_count2 = 10;
 quad_desc recs2[MAX_RECTS];
 struct velocity2 recs_dxy2[MAX_RECTS];
 spritebatch_desc sprt2;
@@ -26,12 +27,13 @@ void ex2_start(void) {
   spritebatch_create(&sprt2);
 }
 
-void ex2_frame(const sapp_event *e) {
+int ex2_frame(const sapp_event *e) {
   if (e != NULL) {
     event2(e);
   }
   update2();
   draw2();
+  return rect_count2;
 }
 
 void ex2_end(void) {
@@ -45,6 +47,7 @@ void event2(const sapp_event *e) {
       float w = 48.0f;
       float h = 48.0f;
 
+    for (int i = 0; i < rect_add_count2; ++i) {
       recs2[rect_count2] = (quad_desc){
           .x = e->mouse_x - (w / 2.0f),
           .y = e->mouse_y - (h / 2.0f),
@@ -62,6 +65,7 @@ void event2(const sapp_event *e) {
           },
 
       rect_count2 += 1;
+    }
 
       printf("Total Smileys: %d\n", rect_count2);
     }

@@ -1,8 +1,8 @@
 #include "fontsprite.h"
 #include <string.h>
 
-void fontsprite_draw(font_texture font, batchrenderer *renderer, char str[], float x, float y,
-                     float scale) {
+void fontsprite_draw(font_texture font, batchrenderer *renderer, char str[],
+                     float x, float y, float scale) {
   size_t len = strlen(str);
   float dx = 0;
   int i;

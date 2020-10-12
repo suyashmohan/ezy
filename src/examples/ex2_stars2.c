@@ -22,12 +22,12 @@ void update2(void);
 void draw2(void);
 
 void ex2_start(void) {
-  texture tex =  load_image("./assets/texture.png");
+  texture tex = load_image("./assets/texture.png");
   renderer2 = batchrenderer_create((batchrenderer_desc){
-    .max_quads = MAX_RECTS,
-    .tex = tex,
+      .max_quads = MAX_RECTS,
+      .tex = tex,
   });
-  //free(bitmap);
+  // free(bitmap);
 }
 
 int ex2_frame(const sapp_event *e) {
@@ -39,9 +39,7 @@ int ex2_frame(const sapp_event *e) {
   return rect_count2;
 }
 
-void ex2_end(void) {
-  batchrenderer_destroy(renderer2);
-}
+void ex2_end(void) { batchrenderer_destroy(renderer2); }
 
 void event2(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
@@ -49,25 +47,25 @@ void event2(const sapp_event *e) {
       float w = 48.0f;
       float h = 48.0f;
 
-    for (int i = 0; i < rect_add_count2; ++i) {
-      recs2[rect_count2] = (quad_desc){
-          .x = e->mouse_x - (w / 2.0f),
-          .y = e->mouse_y - (h / 2.0f),
-          .w = w,
-          .h = h,
-          .src_y = (float)(rand() % 19) * 16.0f,
-          .src_w = 16.0f,
-          .src_h = 16.0f,
-      };
+      for (int i = 0; i < rect_add_count2; ++i) {
+        recs2[rect_count2] = (quad_desc){
+            .x = e->mouse_x - (w / 2.0f),
+            .y = e->mouse_y - (h / 2.0f),
+            .w = w,
+            .h = h,
+            .src_y = (float)(rand() % 19) * 16.0f,
+            .src_w = 16.0f,
+            .src_h = 16.0f,
+        };
 
-      recs_dxy2[rect_count2] =
-          (struct velocity2){
-              .dx = (float)rand() / (float)(RAND_MAX)-0.5f,
-              .dy = (float)rand() / (float)(RAND_MAX)-0.5f,
-          },
+        recs_dxy2[rect_count2] =
+            (struct velocity2){
+                .dx = (float)rand() / (float)(RAND_MAX)-0.5f,
+                .dy = (float)rand() / (float)(RAND_MAX)-0.5f,
+            },
 
-      rect_count2 += 1;
-    }
+        rect_count2 += 1;
+      }
 
       printf("Total Smileys: %d\n", rect_count2);
     }

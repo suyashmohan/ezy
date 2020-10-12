@@ -3,7 +3,7 @@
 
 #include "renderer.h"
 
-void fontsprite_draw(font_texture font, batchrenderer *renderer, char str[], float x, float y,
-                     float scale);
+void fontsprite_draw(font_texture font, batchrenderer *renderer, char str[],
+                     float x, float y, float scale);
 
 #endif

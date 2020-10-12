@@ -4,36 +4,34 @@
 #include <string.h>
 
 texture load_image(const char file[]) {
-    texture td = (texture){
+  texture td = (texture){
       .bitmap = NULL,
-    };
+  };
 
-    int imgW, imgH, nrChannels;
-    int desired_channels = 4;
-    // stbi_set_flip_vertically_on_load(true);
-    unsigned char *bitmap = stbi_load(file, &imgW, &imgH,
-                                    &nrChannels, desired_channels);
+  int imgW, imgH, nrChannels;
+  int desired_channels = 4;
+  // stbi_set_flip_vertically_on_load(true);
+  unsigned char *bitmap =
+      stbi_load(file, &imgW, &imgH, &nrChannels, desired_channels);
 
-    if(!bitmap) {
-      return td;
-    }
-
-    td.width = imgW;
-    td.height = imgH;
-    td.channels = nrChannels;
-    td.bitmap = bitmap;
-
+  if (!bitmap) {
     return td;
+  }
+
+  td.width = imgW;
+  td.height = imgH;
+  td.channels = nrChannels;
+  td.bitmap = bitmap;
+
+  return td;
 }
 
 font_texture load_font(const char file[], float line_height) {
-  font_texture font = (font_texture){
-      .line_height = line_height,
-      .tex = {
-          .bitmap = NULL,
-          .channels = 4,
-      }
-  };
+  font_texture font = (font_texture){.line_height = line_height,
+                                     .tex = {
+                                         .bitmap = NULL,
+                                         .channels = 4,
+                                     }};
 
   /* load font file */
   long size;
@@ -95,7 +93,7 @@ font_texture load_font(const char file[], float line_height) {
     x += (int)roundf(kern * scale);
   }
 
-  int b_w = x;   /* bitmap width */
+  int b_w = x;               /* bitmap width */
   int b_h = (int)ceilf(l_h); /* bitmap height */
   font.tex.width = b_w;
   font.tex.height = b_h;
@@ -146,6 +144,6 @@ font_texture load_font(const char file[], float line_height) {
     font.tex.bitmap[i * 4 + 3] = bitmap1[i];
   }
   free(bitmap1);
-  
+
   return font;
 }

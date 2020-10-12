@@ -22,12 +22,12 @@ void update(void);
 void draw(void);
 
 void ex1_start(void) {
-  texture tex =  load_image("./assets/flare.png");
+  texture tex = load_image("./assets/flare.png");
   renderer = batchrenderer_create((batchrenderer_desc){
-    .max_quads = MAX_RECTS,
-    .tex = tex,
+      .max_quads = MAX_RECTS,
+      .tex = tex,
   });
-  //free(bitmap);
+  // free(bitmap);
 }
 
 int ex1_frame(const sapp_event *e) {
@@ -39,9 +39,7 @@ int ex1_frame(const sapp_event *e) {
   return rect_count;
 }
 
-void ex1_end(void) {
-  batchrenderer_destroy(renderer);
-}
+void ex1_end(void) { batchrenderer_destroy(renderer); }
 
 void event(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {

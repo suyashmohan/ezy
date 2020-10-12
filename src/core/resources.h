@@ -6,4 +6,4 @@
 texture load_image(const char file[]);
 font_texture load_font(const char file[], float line_height);
 
-#endif 
+#endif

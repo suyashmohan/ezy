@@ -24,24 +24,28 @@ void renderer_init(void) {
                    [ATTR_vs_texcoord0] = {.offset = 6 * sizeof(float),
                                           .format = SG_VERTEXFORMAT_FLOAT2},
                }},
-      .blend = {.enabled = true,
-                .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
-                .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-      },
-      .depth_stencil = {
-                .depth_compare_func = SG_COMPAREFUNC_LESS_EQUAL,
-                .depth_write_enabled = true,
-      },
-      .rasterizer = {
-          .cull_mode = SG_CULLMODE_BACK,
-      },
+      .blend =
+          {
+              .enabled = true,
+              .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
+              .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+          },
+      .depth_stencil =
+          {
+              .depth_compare_func = SG_COMPAREFUNC_LESS_EQUAL,
+              .depth_write_enabled = true,
+          },
+      .rasterizer =
+          {
+              .cull_mode = SG_CULLMODE_BACK,
+          },
   });
 }
 
 batchrenderer batchrenderer_create(batchrenderer_desc br_desc) {
   batchrenderer br = {
-    .vertices_per_quad = 4,
-    .indices_per_quad = 6,
+      .vertices_per_quad = 4,
+      .indices_per_quad = 6,
   };
 
   if (br_desc.max_quads == 0) {
@@ -69,31 +73,34 @@ batchrenderer batchrenderer_create(batchrenderer_desc br_desc) {
       .fs_images[SLOT_tex] = sg_alloc_image(),
   };
 
-  sg_init_image(br.bind.fs_images[SLOT_tex],
-                  &(sg_image_desc){.width = br_desc.tex.width,
-                                   .height = br_desc.tex.height,
-                                   .pixel_format = SG_PIXELFORMAT_RGBA8,
-                                   .min_filter = SG_FILTER_LINEAR,
-                                   .mag_filter = SG_FILTER_LINEAR,
-                                   .content.subimage[0][0] = {
-                                     .ptr = br_desc.tex.bitmap,
-                                       .size = br_desc.tex.width * br_desc.tex.height * br_desc.tex.channels,
-                                   }});
+  sg_init_image(
+      br.bind.fs_images[SLOT_tex],
+      &(sg_image_desc){.width = br_desc.tex.width,
+                       .height = br_desc.tex.height,
+                       .pixel_format = SG_PIXELFORMAT_RGBA8,
+                       .min_filter = SG_FILTER_LINEAR,
+                       .mag_filter = SG_FILTER_LINEAR,
+                       .content.subimage[0][0] = {
+                           .ptr = br_desc.tex.bitmap,
+                           .size = br_desc.tex.width * br_desc.tex.height *
+                                   br_desc.tex.channels,
+                       }});
 
   br.vertices_count = 0;
-  br.vertices =
-      (vertex_desc *)malloc(br.max_quads * br.vertices_per_quad * sizeof(vertex_desc));
+  br.vertices = (vertex_desc *)malloc(br.max_quads * br.vertices_per_quad *
+                                      sizeof(vertex_desc));
   br.indices_count = 0;
-  br.indices = (uint16_t *)malloc(br.max_quads * br.indices_per_quad * sizeof(uint16_t));
+  br.indices =
+      (uint16_t *)malloc(br.max_quads * br.indices_per_quad * sizeof(uint16_t));
 
   return br;
 }
 
 void batchrenderer_destroy(batchrenderer br) {
-  if(br.vertices != NULL) {
+  if (br.vertices != NULL) {
     free(br.vertices);
   }
-  if(br.indices != NULL) {
+  if (br.indices != NULL) {
     free(br.indices);
   }
 }
@@ -172,4 +179,3 @@ void batchrenderer_commit(batchrenderer *br) {
     br->indices_count = 0;
   }
 }
-

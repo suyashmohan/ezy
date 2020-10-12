@@ -1,7 +1,7 @@
 #include "ex3_font.h"
+#include "../core/fontsprite.h"
 #include "../core/renderer.h"
 #include "../core/resources.h"
-#include "../core/fontsprite.h"
 
 #define MAX_RECTS 10000
 #include <stdio.h>
@@ -18,10 +18,10 @@ int frame_count = 0;
 void ex3_start(void) {
   font = load_font("./assets/monogram_extended.ttf", 48.0f);
   renderer3 = batchrenderer_create((batchrenderer_desc){
-    .max_quads = MAX_RECTS,
-    .tex = font.tex,
+      .max_quads = MAX_RECTS,
+      .tex = font.tex,
   });
-  //free(bitmap);
+  // free(bitmap);
 
   stm_setup();
 }
@@ -49,6 +49,4 @@ void ex3_frame(const sapp_event *e, int rects) {
   batchrenderer_commit(&renderer3);
 }
 
-void ex3_end(void) {
-  batchrenderer_destroy(renderer3);
-}
+void ex3_end(void) { batchrenderer_destroy(renderer3); }

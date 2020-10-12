@@ -6,6 +6,7 @@
 int example;
 
 void start(void) {
+  printf("Starting Game\n");
   example = 1;
   ex1_start();
   ex2_start();
@@ -39,6 +40,7 @@ void frame(const sapp_event *e) {
 }
 
 void end(void) {
+  printf("Ending Game\n");
   ex1_end();
   ex2_end();
   ex3_end();

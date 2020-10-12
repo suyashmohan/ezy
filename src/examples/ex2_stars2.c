@@ -1,5 +1,6 @@
 #include "ex2_stars2.h"
 #include "../core/renderer.h"
+#include "../core/resources.h"
 
 #define MAX_RECTS 10000
 #include <stdio.h>
@@ -14,17 +15,19 @@ int rect_count2 = 0;
 int rect_add_count2 = 10;
 quad_desc recs2[MAX_RECTS];
 struct velocity2 recs_dxy2[MAX_RECTS];
-spritebatch_desc sprt2;
+batchrenderer renderer2;
 
 void event2(const sapp_event *e);
 void update2(void);
 void draw2(void);
 
 void ex2_start(void) {
-  printf("Starting Game\n");
-  sprt2 = (spritebatch_desc){.max_quads = MAX_RECTS,
-                             .texture = {.path = "assets/texture.png"}};
-  spritebatch_create(&sprt2);
+  texture tex =  load_image("./assets/texture.png");
+  renderer2 = batchrenderer_create((batchrenderer_desc){
+    .max_quads = MAX_RECTS,
+    .tex = tex,
+  });
+  //free(bitmap);
 }
 
 int ex2_frame(const sapp_event *e) {
@@ -37,8 +40,7 @@ int ex2_frame(const sapp_event *e) {
 }
 
 void ex2_end(void) {
-  printf("Ending Game\n");
-  spritebatch_destroy(&sprt2);
+  batchrenderer_destroy(renderer2);
 }
 
 void event2(const sapp_event *e) {
@@ -87,7 +89,7 @@ void update2(void) {
 
 void draw2(void) {
   for (int i = 0; i < rect_count2; i++) {
-    spritebatch_draw(&sprt2, recs2[i]);
+    batchrenderer_draw(&renderer2, recs2[i]);
   }
-  spritebatch_commit(&sprt2);
+  batchrenderer_commit(&renderer2);
 }

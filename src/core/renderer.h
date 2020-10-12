@@ -8,7 +8,7 @@
 #define MAX_QUADS 10000
 #define FILEPATH_SIZE 256
 
-typedef struct vertex_desc_t {
+typedef struct vertex_desc {
   float pos_x;
   float pos_y;
   float clr_r;
@@ -17,46 +17,38 @@ typedef struct vertex_desc_t {
   float clr_a;
   float tex_u;
   float tex_v;
-} vertex_desc_t;
+} vertex_desc;
 
-typedef struct font_texture_desc {
-  const char *filepath;
-  uint16_t line_height;
-} font_texture_desc;
+typedef struct texture {
+  int width;
+  int height;
+  int channels;
+  unsigned char *bitmap;
+} texture;
 
 typedef struct font_texture {
-  unsigned char *bitmap;
-  uint16_t width;
-  uint16_t height;
-  uint16_t line_height;
+  float line_height;
+  texture tex;
   uint16_t word_x[96];
   char word[96];
 } font_texture;
 
-typedef enum texture_type {
-  EZY_TEXTURE_SPRITESHEET = 0,
-  EZY_TEXTURE_FONT,
-} texture_type;
+typedef struct batchrenderer_desc {
+  texture tex;
+  uint16_t max_quads;
+} batchrenderer_desc;
 
-typedef struct texture_desc {
-  texture_type type;
-  char path[FILEPATH_SIZE];
-  font_texture font;
-  uint16_t width;
-  uint16_t height;
-  uint16_t chanels;
-} texture_desc;
-
-typedef struct spritebatch_desc {
-  texture_desc texture;
-  uint32_t max_quads;
-  // For internal Use
+typedef struct batchrenderer {
   sg_bindings bind;
-  vertex_desc_t *vertices;
+  vertex_desc *vertices;
   uint16_t *indices;
   uint32_t vertices_count;
   uint32_t indices_count;
-} spritebatch_desc;
+  uint8_t vertices_per_quad;
+  uint8_t indices_per_quad;
+  uint32_t max_quads;
+  texture tex;
+} batchrenderer;
 
 typedef enum quad_type {
   EZY_QUAD_TEXTURE = 0,
@@ -83,15 +75,10 @@ typedef struct quad_desc {
 // renderer_* functions are meant to be used internally
 void renderer_init(void);
 
-// spritebatch functions
-void spritebatch_create(spritebatch_desc *sprt);
-void spritebatch_destroy(spritebatch_desc *sprt);
-void spritebatch_draw(spritebatch_desc *sprt, quad_desc quads);
-void spritebatch_commit(spritebatch_desc *sprt);
-
-// font functions
-font_texture spritefont_create(font_texture_desc desc);
-void spritefont_draw(spritebatch_desc *sprt, char str[], float x, float y,
-                     float scale);
+// batchrenderer functions
+batchrenderer batchrenderer_create(batchrenderer_desc br_desc);
+void batchrenderer_destroy(batchrenderer br);
+void batchrenderer_draw(batchrenderer *br, quad_desc quad);
+void batchrenderer_commit(batchrenderer *br);
 
 #endif

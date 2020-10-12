@@ -1,5 +1,6 @@
 #include "ex1_stars.h"
 #include "../core/renderer.h"
+#include "../core/resources.h"
 
 #define MAX_RECTS 10000
 #include <stdio.h>
@@ -14,17 +15,19 @@ int rect_count = 0;
 int rect_add_count = 10;
 quad_desc recs[MAX_RECTS];
 struct velocity recs_dxy[MAX_RECTS];
-spritebatch_desc sprt;
+batchrenderer renderer;
 
 void event(const sapp_event *e);
 void update(void);
 void draw(void);
 
 void ex1_start(void) {
-  printf("Starting Game\n");
-  sprt = (spritebatch_desc){.max_quads = MAX_RECTS,
-                            .texture = {.path = "assets/flare.png"}};
-  spritebatch_create(&sprt);
+  texture tex =  load_image("./assets/flare.png");
+  renderer = batchrenderer_create((batchrenderer_desc){
+    .max_quads = MAX_RECTS,
+    .tex = tex,
+  });
+  //free(bitmap);
 }
 
 int ex1_frame(const sapp_event *e) {
@@ -37,15 +40,14 @@ int ex1_frame(const sapp_event *e) {
 }
 
 void ex1_end(void) {
-  printf("Ending Game\n");
-  spritebatch_destroy(&sprt);
+  batchrenderer_destroy(renderer);
 }
 
 void event(const sapp_event *e) {
   if (e->type == SAPP_EVENTTYPE_MOUSE_MOVE) {
     if (rect_count < MAX_RECTS) {
-      float w = sprt.texture.width / 2.0f;
-      float h = sprt.texture.height / 2.0f;
+      float w = renderer.tex.width / 2.0f;
+      float h = renderer.tex.height / 2.0f;
 
       for (int i = 0; i < rect_add_count; ++i) {
         recs[rect_count] = (quad_desc){
@@ -87,7 +89,7 @@ void update(void) {
 
 void draw(void) {
   for (int i = 0; i < rect_count; i++) {
-    spritebatch_draw(&sprt, recs[i]);
+    batchrenderer_draw(&renderer, recs[i]);
   }
-  spritebatch_commit(&sprt);
+  batchrenderer_commit(&renderer);
 }

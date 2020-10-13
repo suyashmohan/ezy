@@ -68,7 +68,6 @@ void event(const sapp_event *e) {
         rect_count += 1;
       }
     }
-    printf("Total Stars: %d\n", rect_count);
   }
 }
 

@@ -66,8 +66,6 @@ void event2(const sapp_event *e) {
 
         rect_count2 += 1;
       }
-
-      printf("Total Smileys: %d\n", rect_count2);
     }
   }
 }

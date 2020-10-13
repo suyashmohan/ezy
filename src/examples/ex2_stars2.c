@@ -27,7 +27,7 @@ void ex2_start(void) {
       .max_quads = MAX_RECTS,
       .tex = tex,
   });
-  // free(bitmap);
+  free(tex.bitmap);
 }
 
 int ex2_frame(const sapp_event *e) {

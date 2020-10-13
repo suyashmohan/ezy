@@ -21,7 +21,7 @@ void ex3_start(void) {
       .max_quads = MAX_RECTS,
       .tex = font.tex,
   });
-  // free(bitmap);
+  free(font.tex.bitmap);
 
   stm_setup();
 }

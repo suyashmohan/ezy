@@ -14,14 +14,14 @@ drwav wav;
 bool isPlaying = false;
 
 void stream_cb(float *buffer, int num_frames, int num_channels) {
+  drwav_uint64 r = 0;
   if (isPlaying) {
-    drwav_uint64 r = drwav_read_pcm_frames_f32(&wav, num_frames, buffer);
-
-    if (r < num_frames) {
-      memset(buffer + r * num_channels, 0x0,
-             (num_frames - r) * num_channels * sizeof(float));
-      drwav_seek_to_pcm_frame(&wav, 0);
-    }
+    r = drwav_read_pcm_frames_f32(&wav, num_frames, buffer);
+  }
+  if (r < num_frames) {
+    memset(buffer + r * num_channels, 0x0,
+           (num_frames - r) * num_channels * sizeof(float));
+    // drwav_seek_to_pcm_frame(&wav, 0);
   }
 }
 
@@ -41,12 +41,16 @@ void start(void) {
   printf("audio init: %d\nSample rate: %d\nChannels: %d\n", saudio_isvalid(),
          saudio_sample_rate(), saudio_channels());
 
-  if (!drwav_init_file(&wav, "assets/WAV_10MG.wav", NULL)) {
+  isPlaying = true;
+  if (!drwav_init_file(&wav, "assets/PinkPanther60_44.wav", NULL)) {
     printf("Error opening WAV file.\n");
   }
-  printf("1 - Wav Channels: %d\n", wav.channels);
-  printf("1 - Sample Rate: %d\n", wav.sampleRate);
-  isPlaying = true;
+  if (wav.channels != SND_DEVICE_NUM_CHANNELS &&
+      wav.sampleRate != SND_DEVICE_SAMPLE_RATE) {
+    printf("Only audio file with 44100Hz and 2 Channels allowed.\n");
+    printf("Channels: %d\nSample Rate: %d\n", wav.channels, wav.sampleRate);
+    isPlaying = false;
+  }
 }
 
 void frame(const sapp_event *e) {

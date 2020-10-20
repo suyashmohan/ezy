@@ -1,4 +1,5 @@
 #include "../game.h"
+#include "audio.h"
 #include "core.h"
 #include "renderer.h"
 #include <stdio.h>
@@ -14,6 +15,7 @@ void app_init(void) {
       (sg_pass_action){.colors[0] = {.action = SG_ACTION_CLEAR,
                                      .val = {0.0f, 0.0f, 0.0f, 1.0f}}};
   renderer_init();
+  audio_init();
   start();
 }
 
@@ -28,6 +30,7 @@ void app_frame(void) {
 void app_cleanup(void) {
   end();
   sg_shutdown();
+  audio_shutdown();
 }
 
 void app_event(const sapp_event *e) { state.last_event = e; }

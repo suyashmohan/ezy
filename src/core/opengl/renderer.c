@@ -10,7 +10,7 @@
 static struct { sg_pipeline pip; } state;
 
 void renderer_init(void) {
-  sg_shader shd = sg_make_shader(sprite_shader_desc());
+  sg_shader shd = sg_make_shader(sprite_shader_desc(sg_query_backend()));
   state.pip = sg_make_pipeline(&(sg_pipeline_desc){
       .shader = shd,
       .index_type = SG_INDEXTYPE_UINT16,
@@ -24,20 +24,17 @@ void renderer_init(void) {
                    [ATTR_vs_texcoord0] = {.offset = 6 * sizeof(float),
                                           .format = SG_VERTEXFORMAT_FLOAT2},
                }},
-      .blend =
+      .cull_mode = SG_CULLMODE_BACK,
+      .depth =
+          {
+              .compare = SG_COMPAREFUNC_LESS_EQUAL,
+              .write_enabled = true,
+          },
+      .colors[0].blend =
           {
               .enabled = true,
               .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
               .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-          },
-      .depth_stencil =
-          {
-              .depth_compare_func = SG_COMPAREFUNC_LESS_EQUAL,
-              .depth_write_enabled = true,
-          },
-      .rasterizer =
-          {
-              .cull_mode = SG_CULLMODE_BACK,
           },
   });
 }
@@ -80,7 +77,7 @@ batchrenderer batchrenderer_create(batchrenderer_desc br_desc) {
                        .pixel_format = SG_PIXELFORMAT_RGBA8,
                        .min_filter = SG_FILTER_LINEAR,
                        .mag_filter = SG_FILTER_LINEAR,
-                       .content.subimage[0][0] = {
+                       .data.subimage[0][0] = {
                            .ptr = br_desc.tex.bitmap,
                            .size = br_desc.tex.width * br_desc.tex.height *
                                    br_desc.tex.channels,
@@ -160,10 +157,14 @@ void batchrenderer_draw(batchrenderer *br, quad_desc quad) {
 
 void batchrenderer_commit(batchrenderer *br) {
   if (br->vertices_count > 0) {
-    sg_update_buffer(br->bind.vertex_buffers[0], br->vertices,
-                     br->vertices_count * sizeof(vertex_desc));
-    sg_update_buffer(br->bind.index_buffer, br->indices,
-                     br->indices_count * sizeof(uint16_t));
+    sg_update_buffer(br->bind.vertex_buffers[0], &(sg_range){
+      .ptr = br->vertices,
+      .size = br->vertices_count * sizeof(vertex_desc),
+    });
+    sg_update_buffer(br->bind.index_buffer, &(sg_range){
+      .ptr = br->indices,
+      .size = br->indices_count * sizeof(uint16_t)
+    });
 
     sg_apply_pipeline(state.pip);
     sg_apply_bindings(&(br->bind));
@@ -171,8 +172,7 @@ void batchrenderer_commit(batchrenderer *br) {
     vs_params_t vs_params;
     vs_params.proj = HMM_Orthographic(0.0, (float)sapp_width(),
                                       (float)sapp_height(), 0.0, 0.0, 1.0);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, &vs_params,
-                      sizeof(vs_params));
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, SLOT_vs_params, &SG_RANGE(vs_params));
 
     sg_draw(0, br->indices_count, 1);
     br->vertices_count = 0;

@@ -2,7 +2,7 @@
 #include "../core/renderer.h"
 #include "../core/resources.h"
 
-#define MAX_RECTS 10000
+#define MAX_RECTS 1000
 #include <stdio.h>
 #include <stdlib.h>
 

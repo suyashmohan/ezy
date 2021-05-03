@@ -13,7 +13,7 @@ void app_init(void) {
   sg_setup(&(sg_desc){.context = sapp_sgcontext()});
   state.pass_action =
       (sg_pass_action){.colors[0] = {.action = SG_ACTION_CLEAR,
-                                     .val = {0.0f, 0.0f, 0.0f, 1.0f}}};
+                                     .value  = {0.0f, 0.0f, 0.0f, 1.0f}}};
   renderer_init();
   audio_init();
   start();

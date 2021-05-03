@@ -9,7 +9,7 @@ int example;
 
 void start(void) {
   printf("Starting Game\n");
-  example = 1;
+  example = 0;
   ex1_start();
   ex2_start();
   ex3_start();
@@ -46,8 +46,8 @@ void frame(const sapp_event *e) {
   } else if (example == 3) {
     ex3_frame(e, 0);
   } else {
-    int r1 = ex1_frame(e);
     int r2 = ex2_frame(e);
+    int r1 = ex1_frame(e);
     ex3_frame(e, r1 + r2);
   }
 }
